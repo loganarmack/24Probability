@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1555512831 source:c:\users\logan\documents\coding\skillsontario\24probability\main.cpp
+	<iostream>
+	<vector>
+	<algorithm>
+	<fstream>
+	<cmath>
+
