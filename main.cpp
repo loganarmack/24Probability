@@ -4,7 +4,7 @@
 #include <fstream>
 #include <cmath>
 
-#define HAND_SIZE 3
+#define HAND_SIZE 4
 
 using namespace std;
 
@@ -44,31 +44,49 @@ int main() {
         cards[4*i+3] = i + 1;
     }
 
-    //loop through each possible target goal
-    for (int goalNum = 0; goalNum < 25; goalNum++) {
-        int workingHands = 0; //counts the number of working permutations for each target
+    int goalNum;
+    cout << "Enter target sum: ";
+    cin >> goalNum;
+    int workingHands = 0; //counts the number of working permutations for each target
 
-        //generate every possible hand permutation
-        for (int i = 0; i < 40; i++) {
-            hand[0] = cards[i];
-            for (int j = 0; j < 39; j++) {
-                if (i <= j) {
-                    hand[1] = cards[j + 1];
+    //generate every possible hand permutation
+    for (int i = 0; i < 40; i++) {
+        hand[0] = cards[i];
+        for (int j = 0; j < 39; j++) {
+            if (i <= j) {
+                hand[1] = cards[j + 1];
+            }
+            else {
+                hand[1] = cards[j];
+            }
+            for (int k = 0; k < 38; k++) {
+                if (i <= k) {
+                    if (j <= k + 1) {
+                        hand[2] = cards[k + 2];
+                    }
+                    else {
+                        hand[2] = cards[k + 1];
+                    }
                 }
                 else {
-                    hand[1] = cards[j];
+                    hand[2] = cards[k];
                 }
-                for (int k = 0; k < 38; k++) {
-                    if (i <= k) {
-                        if (j <= k + 1) {
-                            hand[2] = cards[k + 2];
+                for (int l = 0; l < 37; l++) {
+                    if (i <= l) {
+                        if (j <= l + 1) {
+                            if (k <= l + 2) {
+                                hand[3] = cards[l + 3];
+                            }
+                            else {
+                                hand[3] = cards[l + 2];
+                            }
                         }
                         else {
-                            hand[1] = cards[k + 1];
+                            hand[3] = cards[l + 1];
                         }
                     }
                     else {
-                        hand[2] = cards[k];
+                        hand[3] = cards[l];
                     }
                     if (checkHand(hand, goalNum, permutations)) {
                         workingHands++;
@@ -76,10 +94,10 @@ int main() {
                 }
             }
         }
-        //print out result to screen and file
-        cout << goalNum << ": " << workingHands << endl;
-        fout << goalNum << ", " << workingHands << "," << endl;
     }
+    //print out result to screen and file
+    cout << goalNum << ": " << workingHands << endl;
+    fout << goalNum << ", " << workingHands << "," << endl;
     fout.close();
 }
 
@@ -88,13 +106,16 @@ bool checkHand(int hand[HAND_SIZE], int goalNum, int permutations[][HAND_SIZE]) 
     for (int i = 0; i < factorial(HAND_SIZE); i++) {
         for (int j = 0; j < 4; j++) {
             for (int k = 0; k < 4; k++) {
-                int operatorList[HAND_SIZE - 1];
-                operatorList[0] = j;
-                operatorList[1] = k;
-                float tempTotal = solveHand(hand, i, operatorList, permutations);
-                if (tempTotal == goalNum && tempTotal - int(tempTotal) == 0.0) {
-                    //can sum to goal num & doesn't take advantage of float truncation
-                    return true;
+                for (int l = 0; l < 4; l++) {
+                    int operatorList[HAND_SIZE - 1];
+                    operatorList[0] = j;
+                    operatorList[1] = k;
+                    operatorList[2] = l;
+                    float tempTotal = solveHand(hand, i, operatorList, permutations);
+                    if (tempTotal == goalNum && tempTotal - int(tempTotal) == 0.0) {
+                        //can sum to goal num & doesn't take advantage of float truncation
+                        return true;
+                    }
                 }
             }
         }
